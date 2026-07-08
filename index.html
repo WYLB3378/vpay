@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>泽璇电竞 | ZEXUAN Esports</title>
+  <style>
+    /* ===== 全局重置 & 基础 ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; background: var(--bg-body); color: var(--text-primary); }
+    body { overflow-x: hidden; }
+    :root {
+      --brand-primary: #0f2b45;
+      --brand-accent: #2563eb;
+      --brand-accent-light: #60a5fa;
+      --brand-accent-subtle: rgba(37,99,235,0.08);
+      --brand-warm: #c2410c;
+      --brand-warm-light: #fdba74;
+      --brand-warm-subtle: rgba(194,65,12,0.07);
+      --brand-gold: #d4a843;
+      --brand-gold-light: #e8c86a;
+      --brand-gold-bg: rgba(212,168,67,0.10);
+      --bg-body: #f7f5f0;
+      --bg-card: #ffffff;
+      --bg-card-soft: rgba(255,255,255,0.70);
+      --bg-card-hover: #f0ede8;
+      --bg-card-alt: #fcf9f4;
+      --border-subtle: rgba(0,0,0,0.04);
+      --border-light: rgba(0,0,0,0.07);
+      --text-primary: #1a1a1c;
+      --text-secondary: #3a3a3a;
+      --text-muted: #7a7a7a;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.06), 0 3px 8px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,0.08), 0 6px 16px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.02);
+      --shadow-xl: 0 24px 56px rgba(0,0,0,0.10), 0 10px 24px rgba(0,0,0,0.05), 0 4px 8px rgba(0,0,0,0.02);
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 28px;
+    }
+    /* ===== 滚动条 ===== */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.10); border-radius: 4px; }
+
+    /* ===== 页面容器 ===== */
+    .page { display: none; min-height: 100vh; position: relative; }
+    .page.active { display: flex; flex-direction: column; }
+
+    /* ===== 加载动画（商务简约） ===== */
+    .loading-screen {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg-card);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    .loading-screen.hide { opacity: 0; visibility: hidden; }
+    .loader-logo {
+      font-size: 42px; font-weight: 800;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -2px;
+      margin-bottom: 6px;
+      animation: loaderLogoIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+    }
+    @keyframes loaderLogoIn {
+      0% { opacity: 0; transform: scale(0.85) translateY(8px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .loader-brand {
+      font-size: clamp(22px, 5vw, 32px);
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 2px;
+      opacity: 0;
+      animation: loaderBrandIn 0.6s ease 0.5s forwards;
+    }
+    @keyframes loaderBrandIn {
+      0% { opacity: 0; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .loader-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 5px;
+      margin-top: 4px;
+      opacity: 0;
+      animation: loaderSubIn 0.5s ease 0.8s forwards;
+    }
+    @keyframes loaderSubIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .loader-bar-wrap {
+      margin-top: 32px; width: 140px; height: 1px;
+      background: var(--border-subtle);
+      border-radius: 1px; overflow: hidden;
+    }
+    .loader-bar {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--brand-accent), var(--brand-warm));
+      border-radius: 1px;
+      animation: loaderBarFill 2s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+    }
+    @keyframes loaderBarFill {
+      0% { width: 0%; }
+      30% { width: 25%; }
+      70% { width: 70%; }
+      100% { width: 100%; }
+    }
+
+    /* ===== 入场动画 ===== */
+    .fade-up { opacity: 0; transform: translateY(24px); animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .fade-up.d1 { animation-delay: 0.1s; }
+    .fade-up.d2 { animation-delay: 0.2s; }
+    .fade-up.d3 { animation-delay: 0.3s; }
+    .fade-up.d4 { animation-delay: 0.4s; }
+    .fade-up.d5 { animation-delay: 0.5s; }
+    .fade-up.d6 { animation-delay: 0.6s; }
+    .fade-up.d7 { animation-delay: 0.7s; }
+    .fade-up.d8 { animation-delay: 0.8s; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== 动态粒子背景（多色上浮循环） ===== */
+    .particle-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .particle-bg span {
+      position: absolute;
+      border-radius: 50%;
+      animation: particleFloat linear infinite;
+      pointer-events: none;
+    }
+    .particle-bg span.p-gold {
+      background: radial-gradient(circle at 30% 30%, rgba(212,168,67,0.4), rgba(212,168,67,0.05));
+      box-shadow: 0 0 6px rgba(212,168,67,0.1);
+    }
+    .particle-bg span.p-blue {
+      background: radial-gradient(circle at 30% 30%, rgba(37,99,235,0.3), rgba(37,99,235,0.04));
+      box-shadow: 0 0 6px rgba(37,99,235,0.08);
+    }
+    .particle-bg span.p-warm {
+      background: radial-gradient(circle at 30% 30%, rgba(194,65,12,0.25), rgba(194,65,12,0.03));
+      box-shadow: 0 0 6px rgba(194,65,12,0.06);
+    }
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) translateX(0px) scale(0); opacity: 0; }
+      5% { opacity: 0.6; }
+      30% { transform: translateY(70vh) translateX(10px) scale(1); opacity: 0.7; }
+      60% { transform: translateY(40vh) translateX(-8px) scale(0.8); opacity: 0.5; }
+      85% { transform: translateY(15vh) translateX(5px) scale(0.4); opacity: 0.3; }
+      100% { transform: translateY(-5vh) translateX(0px) scale(0); opacity: 0; }
+    }
+
+    /* ===== 通用水晶毛玻璃卡片 + 3D立体阴影 ===== */
+    .glass {
+      background: var(--bg-card);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      position: relative;
+    }
+    .glass-strong {
+      background: linear-gradient(145deg, var(--bg-card), var(--bg-card-alt));
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      position: relative;
+    }
+    /* 卡片光效装饰 */
+    .card-shine {
+      position: relative;
+      overflow: hidden;
+    }
+    .card-shine::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -50%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transform: skewX(-20deg);
+      animation: cardShine 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes cardShine {
+      0%, 100% { left: -50%; }
+      50% { left: 150%; }
+    }
+    /* 卡片顶部彩色装饰线 */
+    .card-accent-top {
+      position: relative;
+    }
+    .card-accent-top::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 20%; right: 20%;
+      height: 3px;
+      background: #93c5fd;
+      border-radius: 0 0 3px 3px;
+      pointer-events: none;
+    }
+    .card-accent-blue::after {
+      background: #93c5fd;
+    }
+    .card-accent-gold::after {
+      background: #93c5fd;
+    }
+
+    /* ===== 按钮通用 ===== */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      height: 50px; border-radius: 999px;
+      padding: 0 24px;
+      font-size: 16px; font-weight: 600; text-decoration: none;
+      border: none; cursor: pointer; outline: none;
+      transition: all 0.3s cubic-bezier(0.2,0.8,0.2,1);
+      position: relative; overflow: hidden;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn-blue {
+      background: linear-gradient(135deg, var(--brand-primary), #1a4a7a);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(15,43,69,0.25);
+    }
+    .btn-blue:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(15,43,69,0.35);
+    }
+    .btn-glass {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      color: var(--text-primary);
+    }
+    .btn-glass:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      border-color: var(--brand-accent);
+      box-shadow: 0 0 0 2px var(--brand-accent-subtle);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--brand-gold), #c49a35);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(212,168,67,0.25);
+    }
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(212,168,67,0.35);
+    }
+    .btn-warm {
+      background: linear-gradient(135deg, var(--brand-warm), #dc5a1e);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(194,65,12,0.20);
+    }
+    .btn-warm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(194,65,12,0.30);
+    }
+    .btn-pulse {
+      animation: btnPulse 2.4s ease-in-out infinite;
+    }
+    @keyframes btnPulse {
+      0%, 100% { box-shadow: 0 4px 16px rgba(15,43,69,0.20); transform: scale(1); }
+      50% { box-shadow: 0 8px 28px rgba(15,43,69,0.35); transform: scale(1.03); }
+    }
+
+    /* ===== 返回按钮 ===== */
+    .back-btn {
+      position: sticky; top: 12px; z-index: 10;
+      margin: 12px 0 0 20px;
+      padding: 8px 14px 8px 10px;
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--text-secondary); font-size: 14px; font-weight: 500;
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(16px) saturate(200%);
+      -webkit-backdrop-filter: blur(16px) saturate(200%);
+      border: 1px solid var(--border-light);
+      border-radius: 999px; cursor: pointer; outline: none;
+      align-self: flex-start;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .back-btn:hover { background: var(--bg-card-hover); }
+    .back-btn svg { width: 16px; height: 16px; }
+
+    /* ========== 首页 ========== */
+    .home-page {
+      background: linear-gradient(150deg, #f0ede6 0%, #f7f3ec 20%, #fdf9f2 40%, #f5f0e8 60%, #eae4db 80%, #e5dfd6 100%);
+      align-items: center; justify-content: center; padding: 32px 24px;
+      position: relative; overflow: hidden;
+    }
+    .home-page .content-wrap {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      width: 100%; max-width: 440px;
+    }
+    /* 导航栏天气（与导航栏融为一体） */
+    .nav-weather {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 5px 0 7px;
+      width: 100%;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: 2px;
+    }
+    .nav-weather .weather-icon { font-size: 17px; line-height: 1; }
+    .nav-weather .weather-temp { font-size: 14px; font-weight: 700; color: var(--text-secondary); }
+    .nav-weather .weather-desc { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+    .nav-weather .weather-div { width: 1px; height: 10px; background: var(--border-subtle); flex-shrink: 0; }
+    /* 首页 Logo */
+    .home-avatar {
+      width: 135px; height: 135px; border-radius: 50%;
+      border: 3px solid var(--bg-card);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      overflow: hidden; margin-bottom: 22px;
+      transition: all 0.5s cubic-bezier(0.2,0.8,0.2,1);
+      position: relative;
+    }
+    .home-avatar::after {
+      content: ""; position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .home-avatar:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: var(--shadow-lg);
+    }
+    .home-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .home-title {
+      font-size: 36px; font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--brand-primary) 0%, #1a4a7a 50%, var(--brand-accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+    .home-sub {
+      font-size: 13px; color: var(--text-muted);
+      letter-spacing: 5px; font-weight: 400;
+      margin-bottom: 30px;
+    }
+    .home-btn-group {
+      display: flex; flex-direction: column; gap: 12px; width: 100%;
+      max-width: 300px;
+    }
+    .home-btn-row {
+      display: flex; gap: 12px; width: 100%;
+    }
+    .home-btn-row .btn { flex: 1; }
+    .home-btn-center { width: 100%; }
+
+    /* ========== 关于本站 ========== */
+    .about-page {
+      background: linear-gradient(150deg, #f2eee8 0%, #faf6ef 30%, #f5f0e9 60%, #ece7df 100%);
+    }
+    .about-content {
+      flex: 1; padding: 8px 20px 36px;
+      max-width: 480px; margin: 0 auto; width: 100%;
+      position: relative; z-index: 1;
+    }
+    .about-text-card {
+      background: linear-gradient(145deg, #ffffff, #fcfaf6);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 26px 24px;
+      color: var(--text-secondary); font-size: 15px; line-height: 2;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .about-text-card p { margin-bottom: 12px; }
+    .about-text-card p:last-child { margin-bottom: 0; }
+    .about-cards { display: flex; flex-direction: column; gap: 12px; }
+    .about-cards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .about-stat-card {
+      background: linear-gradient(145deg, #ffffff, #fcfaf6);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      text-align: center;
+      position: relative;
+    }
+    .about-stat-card:hover { background: linear-gradient(145deg, #ffffff, #f7f4ee); }
+    .about-stat-value {
+      font-size: 22px; font-weight: 700; color: var(--brand-accent);
+      margin-bottom: 4px;
+    }
+    .about-stat-label { font-size: 12px; color: var(--text-muted); }
+    .about-progress {
+      height: 4px; background: rgba(0,0,0,0.04);
+      border-radius: 2px; margin-top: 10px; overflow: hidden;
+    }
+    .about-progress-bar {
+      height: 100%; width: 90%;
+      background: linear-gradient(90deg, var(--brand-accent), var(--brand-warm));
+      border-radius: 2px;
+    }
+    .about-tech-tag {
+      margin-top: 28px; padding: 10px 22px;
+      background: var(--brand-gold-bg);
+      border: 1px solid rgba(212,168,67,0.25);
+      border-radius: 999px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      cursor: pointer; transition: all 0.3s ease;
+      color: var(--brand-gold); font-size: 12px; font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 28px auto 0; width: fit-content;
+    }
+    .about-tech-tag:hover {
+      background: rgba(212,168,67,0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(212,168,67,0.15);
+    }
+    .about-tech-tag svg { width: 16px; height: 16px; color: var(--brand-gold); }
+
+    /* ========== 官网页面 ========== */
+    .official-page {
+      background: linear-gradient(150deg, #f1eee8 0%, #f8f5ee 25%, #fdfaf4 50%, #f6f2ea 75%, #ece8e0 100%);
+    }
+    .official-content {
+      flex: 1; padding: 8px 20px 100px;
+      max-width: 560px; margin: 0 auto; width: 100%;
+      position: relative; z-index: 1;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .tab-title {
+      font-size: 24px; font-weight: 700; color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .tab-desc {
+      font-size: 14px; color: var(--text-secondary);
+      line-height: 1.9; margin-bottom: 20px;
+    }
+    .section-line {
+      height: 1px; background: var(--border-subtle);
+      margin: 18px 0;
+    }
+    /* 欢迎区域 */
+    .welcome-title {
+      font-size: 26px;
+    }
+    /* 俱乐部信息 */
+    .club-card {
+      display: flex; align-items: center; gap: 16px;
+      background: linear-gradient(145deg, #ffffff, #fcfaf6);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 18px;
+      position: relative;
+    }
+    .club-avatar {
+      width: 60px; height: 60px; border-radius: 50%; flex-shrink: 0;
+      border: 2px solid var(--border-light);
+      object-fit: cover;
+    }
+    .club-name { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .club-badge {
+      font-size: 12px; font-weight: 600;
+      color: var(--brand-warm);
+    }
+    /* 特色卡片容器 */
+    .features-box {
+      background: linear-gradient(145deg, #ffffff, #fdfaf5);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 22px 18px;
+      position: relative; overflow: hidden;
+    }
+    .features-box::before {
+      content: ""; position: absolute;
+      top: -30%; right: -15%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(212,168,67,0.06) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .features-box::after {
+      content: ""; position: absolute;
+      bottom: -20%; left: -10%;
+      width: 150px; height: 150px;
+      background: radial-gradient(circle, rgba(37,99,235,0.04) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .features-head {
+      font-size: 17px; font-weight: 700; text-align: center;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, var(--brand-warm), var(--brand-gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+      position: relative; z-index: 1;
+    }
+    .feat-card {
+      background: linear-gradient(135deg, #f8f6f3, #f0ede8);
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 15px 18px;
+      margin-bottom: 10px;
+      position: relative; z-index: 1;
+      box-shadow: var(--shadow-md);
+    }
+    .feat-card:last-child { margin-bottom: 0; }
+    .feat-card h3 { font-size: 15px; font-weight: 700; color: var(--brand-accent); margin-bottom: 4px; letter-spacing: 1px; }
+    .feat-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.7; font-weight: 400; }
+    .feat-card::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 10%; bottom: 10%;
+      width: 3px;
+      background: linear-gradient(180deg, var(--brand-accent), rgba(37,99,235,0.1));
+      border-radius: 0 3px 3px 0;
+      pointer-events: none;
+    }
+    .official-footnote {
+      text-align: center; margin-top: 24px;
+      color: var(--text-secondary); font-size: 12px; letter-spacing: 2px;
+    }
+    /* 打手入驻卡片 */
+    .join-card {
+      background: linear-gradient(145deg, #ffffff, #fdfaf5);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 22px 18px;
+      margin-top: 18px;
+      position: relative; overflow: hidden;
+      text-align: center;
+    }
+    .join-card::before {
+      content: '';
+      position: absolute;
+      top: -30%; left: -10%;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(37,99,235,0.04) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .join-card-title {
+      font-size: 17px; font-weight: 700; text-align: center;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+      position: relative; z-index: 1;
+    }
+    .join-card-desc {
+      font-size: 13px; color: var(--text-secondary);
+      line-height: 1.9; margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+    .btn-join {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      height: 44px; padding: 0 28px;
+      border-radius: 999px;
+      font-size: 14px; font-weight: 600; text-decoration: none;
+      border: none; cursor: pointer; outline: none;
+      background: linear-gradient(135deg, var(--brand-accent), #1d4ed8);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.25);
+      transition: all 0.3s ease;
+      position: relative; z-index: 1;
+      animation: joinPulse 2s ease-in-out infinite;
+    }
+    .btn-join:active { transform: scale(0.96); }
+    @keyframes joinPulse {
+      0%, 100% { box-shadow: 0 4px 16px rgba(37,99,235,0.25); transform: scale(1); }
+      50% { box-shadow: 0 8px 28px rgba(37,99,235,0.45); transform: scale(1.04); }
+    }
+    /* 打手卡片 */
+    .player-card {
+      background: linear-gradient(145deg, #ffffff, #fcfaf6);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 10px; display: flex; align-items: center; gap: 14px;
+      position: relative;
+    }
+    .player-avatar { width: 52px; height: 52px; flex-shrink: 0; position: relative; }
+    .player-avatar img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      border-radius: 50%; border: 2px solid var(--border-light);
+      background: var(--bg-card-hover);
+    }
+    .rank-badge {
+      position: absolute; bottom: -2px; right: -2px;
+      width: 20px; height: 20px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: #fff;
+      border: 2px solid var(--bg-card);
+      z-index: 2;
+    }
+    .rank-1 { background: linear-gradient(135deg, #d4a017, #b8860b); }
+    .rank-2 { background: linear-gradient(135deg, #a0a0a0, #808080); }
+    .rank-3 { background: linear-gradient(135deg, #c9a060, #a07040); }
+    .player-name { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+    .player-rate { font-size: 12px; color: var(--text-muted); }
+    .players-title {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .tab-end-note {
+      text-align: center; font-size: 12px;
+      color: var(--text-muted);
+      padding: 14px 0 6px;
+    }
+    /* 评价卡片 */
+    .review-card {
+      background: linear-gradient(145deg, #ffffff, #fcfaf6);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .review-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .review-avatar {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      background: var(--bg-card-hover);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .review-avatar svg { width: 20px; height: 20px; color: var(--text-muted); }
+    .review-user { flex: 1; padding-top: 2px; }
+    .review-name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 5px; }
+    .review-stars { font-size: 14px; color: var(--brand-warm); letter-spacing: 1px; }
+    .review-stars .star-empty { color: var(--border-light); }
+    .review-content { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+    .review-line { height: 1px; background: var(--border-subtle); margin-top: 10px; }
+    .refresh-badge {
+      display: inline-block; padding: 2px 8px;
+      background: var(--brand-accent-subtle);
+      border-radius: 4px; font-size: 10px; font-weight: 500;
+      color: var(--brand-accent); margin-left: 6px; vertical-align: middle;
+    }
+    /* 活动卡片 */
+    .events-title {
+      font-size: 24px; font-weight: 700;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-warm));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+    .events-sub { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; }
+    .event-card {
+      background: linear-gradient(145deg, #ffffff, #fdfaf5);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer; margin-bottom: 12px;
+      position: relative;
+    }
+    .event-card-img { width: 100%; height: 150px; object-fit: cover; display: block; }
+    .event-card-body { padding: 12px 16px 16px; }
+    .event-card-title { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .event-card-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+    .event-card-action {
+      font-size: 12px; color: var(--brand-warm); font-weight: 500;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .event-card-action svg { width: 12px; height: 12px; }
+    /* 关于入驻 - 更多 */
+    .more-version-btn {
+      width: 100%; height: 48px; border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(212,168,67,0.10), rgba(212,168,67,0.04));
+      border: 1px solid rgba(212,168,67,0.18);
+      color: var(--brand-gold); font-size: 14px; font-weight: 500;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .more-version-btn:active {
+      transform: scale(0.97);
+    }
+    .more-version-btn svg { width: 16px; height: 16px; }
+
+    /* ===== 底部毛玻璃导航（含天气） ===== */
+    .nav-menu {
+      position: fixed; bottom: 20px; left: 0; right: 0;
+      margin: 0 auto; width: fit-content; max-width: calc(100% - 32px);
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(24px) saturate(200%);
+      -webkit-backdrop-filter: blur(24px) saturate(200%);
+      box-shadow: var(--shadow-md);
+      border-radius: 20px;
+      padding: 6px 8px 0;
+      border: 1px solid rgba(147,197,253,0.25);
+      z-index: 100;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .nav-items {
+      display: flex; gap: 2px;
+    }
+    .nav-item {
+      padding: 7px 10px; height: auto;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px; font-size: 11px; color: var(--text-muted);
+      transition: all 0.25s ease; border-radius: 12px;
+      white-space: nowrap; min-width: 48px;
+      font-weight: 500; cursor: pointer;
+    }
+    .nav-item:hover { color: var(--brand-accent); background: rgba(37,99,235,0.06); }
+    .nav-item.active { color: var(--brand-accent); font-weight: 600; background: rgba(37,99,235,0.10); }
+    .nav-icon { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    /* 娱乐图标发光 */
+    .nav-item-fun .nav-icon {
+      animation: funGlow 2s ease-in-out infinite;
+    }
+    @keyframes funGlow {
+      0%, 100% { stroke: var(--text-muted); filter: drop-shadow(0 0 2px rgba(212,168,67,0)); }
+      50% { stroke: var(--brand-gold); filter: drop-shadow(0 0 6px rgba(212,168,67,0.6)); }
+    }
+
+    /* ========== 版本日志 ========== */
+    .version-page { background: linear-gradient(150deg, #f2eee8 0%, #faf6ef 30%, #f5f0e9 60%, #ece7df 100%); }
+    .version-content {
+      flex: 1; padding: 8px 20px 36px;
+      max-width: 480px; margin: 0 auto; width: 100%;
+      position: relative; z-index: 1;
+    }
+    .version-main-title {
+      font-size: 24px; font-weight: 700; text-align: center;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .version-card {
+      background: linear-gradient(145deg, #ffffff, #fcfaf6);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      position: relative;
+    }
+    .version-item {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 14px; color: var(--text-secondary); font-weight: 500;
+      padding: 14px 0;
+    }
+    .version-item .tag {
+      font-size: 10px; padding: 2px 8px; border-radius: 4px;
+      font-weight: 500;
+    }
+    .version-item .tag.current {
+      background: var(--brand-accent-subtle); color: var(--brand-accent);
+    }
+    .version-divider { height: 1px; background: var(--border-subtle); }
+
+    /* ===== 返回双按钮 ===== */
+    .back-dual {
+      position: sticky; top: 12px; z-index: 10;
+      margin: 12px 0 0 20px;
+      display: inline-flex; align-items: center;
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(16px) saturate(200%);
+      -webkit-backdrop-filter: blur(16px) saturate(200%);
+      border: 1px solid var(--border-light);
+      border-radius: 999px; overflow: hidden;
+      align-self: flex-start;
+      box-shadow: var(--shadow-sm);
+    }
+    .back-dual button {
+      padding: 7px 12px; display: flex; align-items: center; justify-content: center;
+      background: none; border: none; outline: none; cursor: pointer;
+      color: var(--text-muted); transition: all 0.2s;
+    }
+    .back-dual button:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+    .back-dual button svg { width: 16px; height: 16px; }
+    .back-dual-div { width: 1px; height: 16px; background: var(--border-subtle); flex-shrink: 0; }
+
+    /* ===== 服务器运行计时器 ===== */
+    .uptime-section {
+      margin-top: 24px;
+      background: linear-gradient(145deg, #ffffff, #fcfaf6);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 22px 18px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .uptime-section::before {
+      content: ""; position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(212,168,67,0.03), transparent, rgba(37,99,235,0.02), transparent);
+      animation: uptimeRotate 8s linear infinite;
+    }
+    @keyframes uptimeRotate { to { transform: rotate(360deg); } }
+    .uptime-inner { position: relative; z-index: 1; }
+    .uptime-label {
+      font-size: 12px; color: var(--text-muted);
+      letter-spacing: 2px;
+      margin-bottom: 10px; font-weight: 500;
+    }
+    .uptime-display {
+      display: flex; justify-content: center; gap: 8px;
+      flex-wrap: wrap;
+    }
+    .uptime-unit {
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 44px;
+    }
+    .uptime-num {
+      font-size: 30px; font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+    }
+    .uptime-num.seconds {
+      color: var(--brand-gold);
+    }
+    .uptime-label-s {
+      font-size: 9px; color: var(--text-muted);
+      margin-top: 2px; letter-spacing: 1px;
+    }
+    .uptime-sep {
+      font-size: 22px; color: var(--border-light);
+      font-weight: 300; line-height: 1.4;
+      display: flex; align-items: center;
+    }
+    .uptime-status {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin-top: 12px;
+      font-size: 11px; color: var(--text-muted);
+    }
+    .uptime-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #34d399; animation: dotPulse 1.6s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(52,211,153,0.4); }
+      50% { opacity: 0.4; box-shadow: 0 0 2px rgba(52,211,153,0.1); }
+    }
+
+    /* ========== 活动详情 ========== */
+    .event-detail-page { background: linear-gradient(150deg, #f1eee8 0%, #f8f5ee 25%, #fdfaf4 50%, #f6f2ea 75%, #ece8e0 100%); }
+    .event-detail-content {
+      flex: 1; padding: 8px 20px 36px;
+      max-width: 500px; margin: 0 auto; width: 100%;
+      position: relative; z-index: 1;
+    }
+    .event-detail-card {
+      background: linear-gradient(145deg, #ffffff, #fdfaf5);
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      position: relative;
+    }
+    .event-detail-img {
+      width: 100%; border-radius: var(--radius-md); display: block;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 18px;
+    }
+    .event-detail-text {
+      font-size: 13px; color: var(--text-secondary);
+      line-height: 1.8; text-align: center;
+    }
+    .event-detail-text p { margin-bottom: 8px; }
+
+    /* ===== 鼓励开发者页面 ===== */
+    .donate-page { background: linear-gradient(150deg, #f1eee8 0%, #f8f5ee 25%, #fdfaf4 50%, #f6f2ea 75%, #ece8e0 100%); }
+    .donate-content {
+      flex: 1; padding: 8px 20px 36px;
+      max-width: 480px; margin: 0 auto; width: 100%;
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 80vh;
+    }
+    .donate-card {
+      background: linear-gradient(145deg, #ffffff, #fdfaf5);
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: 32px 24px;
+      text-align: center;
+      width: 100%;
+    }
+    .donate-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--brand-primary);
+      line-height: 1.8;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+    }
+    .btn-donate {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      height: 48px; padding: 0 32px;
+      border-radius: 999px;
+      font-size: 16px; font-weight: 600; text-decoration: none;
+      border: none; cursor: pointer; outline: none;
+      background: linear-gradient(135deg, var(--brand-gold), #c49a35);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(212,168,67,0.30);
+      transition: all 0.3s ease;
+    }
+    .btn-donate:active { transform: scale(0.96); }
+    /* ===== 弹窗 ===== */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 9998;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      padding: 28px 24px 24px;
+      max-width: 340px;
+      width: 100%;
+      box-shadow: var(--shadow-xl);
+      position: relative;
+      text-align: center;
+    }
+    .modal-close {
+      position: absolute; top: 12px; right: 14px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: none; background: var(--bg-card-hover);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      font-size: 16px; line-height: 1;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: var(--border-light); }
+    .modal-title {
+      font-size: 16px; font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .modal-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+    .modal-qr {
+      width: 180px; height: 180px;
+      background: #f5f3ef;
+      border: 2px dashed var(--border-light);
+      border-radius: var(--radius-md);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    /* ===== 游戏入口卡片 ===== */
+    .game-card {
+      background: linear-gradient(145deg, #ffffff, #fcfaf6);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .game-card:active { transform: scale(0.98); }
+    .game-card-icon { font-size: 32px; flex-shrink: 0; }
+    .game-card-info { flex: 1; }
+    .game-card-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+    .game-card-desc { font-size: 12px; color: var(--text-muted); }
+    .game-card-arrow { width: 18px; height: 18px; color: var(--text-muted); flex-shrink: 0; }
+    /* ===== 游戏页面 ===== */
+    .tetris-page { background: #1a1a2e; }
+    .tetris-content {
+      flex: 1; padding: 8px 12px 20px;
+      max-width: 420px; margin: 0 auto; width: 100%;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .tetris-header {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 8px 4px;
+    }
+    .tetris-score { font-size: 16px; font-weight: 700; color: #fff; }
+    .tetris-score span { color: #60a5fa; }
+    .tetris-records { font-size: 12px; color: rgba(255,255,255,0.4); }
+    .tetris-records span { color: #f5c518; }
+    .tetris-notify {
+      height: auto; min-height: 24px; text-align: center;
+      padding: 2px 0;
+      font-size: 15px; font-weight: 700; color: #f5c518;
+      opacity: 0; transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .tetris-notify.show { opacity: 1; }
+    .tetris-board-wrap {
+      position: relative;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #0f0f23;
+    }
+    #tetrisCanvas { display: block; }
+    .tetris-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 14px;
+      width: 200px;
+    }
+    .tetris-btn {
+      height: 52px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .tetris-btn:active { background: rgba(255,255,255,0.15); }
+    .tetris-btn-wide {
+      grid-column: span 3;
+      height: 44px;
+      font-size: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(96,165,250,0.3);
+      background: rgba(96,165,250,0.1);
+      color: #60a5fa;
+      margin-top: 4px;
+    }
+    .tetris-btn-wide:active { background: rgba(96,165,250,0.2); }
+    .tetris-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center; justify-content: center;
+      flex-direction: column;
+      z-index: 5;
+    }
+    .tetris-overlay.show { display: flex; }
+    .tetris-overlay-text { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .tetris-overlay-sub { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 16px; }
+    .tetris-overlay-btn {
+      padding: 10px 28px; border-radius: 999px;
+      border: none; background: #60a5fa; color: #fff;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    /* ===== 五子棋 ===== */
+    .goban-page { background: linear-gradient(150deg, #f1eee8 0%, #f8f5ee 25%, #fdfaf4 50%, #f6f2ea 75%, #ece8e0 100%); }
+    .goban-content {
+      flex: 1; padding: 8px 12px 20px;
+      max-width: 420px; margin: 0 auto; width: 100%;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .goban-header {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 8px 4px;
+    }
+    .goban-stats { font-size: 14px; color: var(--text-secondary); }
+    .goban-stats span { font-weight: 700; color: var(--brand-primary); }
+    .goban-winrate { font-size: 12px; color: var(--text-muted); }
+    .goban-board-wrap {
+      background: #dcb35c;
+      border-radius: 6px;
+      padding: 8px;
+      box-shadow: var(--shadow-md);
+    }
+    #gobanCanvas { display: block; border-radius: 3px; cursor: pointer; }
+    .goban-diff-wrap {
+      display: flex; gap: 10px; width: 100%;
+      margin-bottom: 14px;
+    }
+    .goban-diff-btn {
+      flex: 1; height: 70px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-light);
+      background: var(--bg-card);
+      cursor: pointer;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .goban-diff-btn:active { transform: scale(0.96); }
+    .goban-diff-btn.active { border-color: var(--brand-accent); background: var(--brand-accent-subtle); }
+    #gobanHard.active { border-color: #8b5cf6; background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(88,28,135,0.15)); }
+    #gobanHard.active .goban-diff-name { color: #7c3aed; }
+    #gobanHard.active .goban-diff-sub { color: #a78bfa; }
+    .goban-diff-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+    .goban-diff-sub { font-size: 11px; color: var(--text-muted); }
+    .goban-diff-btn.active .goban-diff-sub { color: var(--brand-accent); }
+    .goban-turn { font-size: 14px; color: var(--text-secondary); margin: 8px 0 4px; font-weight: 500; }
+    .goban-restart {
+      height: 42px; border-radius: 999px;
+      border: 1px solid var(--border-light);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; padding: 0 20px;
+      margin-top: 4px;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .goban-restart:active { background: var(--bg-card-hover); }
+    .goban-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center; justify-content: center;
+      flex-direction: column;
+      border-radius: 3px;
+    }
+    .goban-overlay.show { display: flex; }
+    .goban-overlay-text { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .goban-overlay-sub { font-size: 13px; color: rgba(255,255,255,0.6); }
+    .goban-overlay-btn {
+      margin-top: 12px; padding: 8px 28px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.12);
+      color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    .goban-overlay-btn:active { background: rgba(255,255,255,0.25); }
+    /* ===== 石头剪刀布 ===== */
+    .rps-page { background: linear-gradient(150deg, #f1eee8 0%, #f8f5ee 25%, #fdfaf4 50%, #f6f2ea 75%, #ece8e0 100%); }
+    .rps-content {
+      flex: 1; padding: 8px 12px 36px;
+      max-width: 420px; margin: 0 auto; width: 100%;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .rps-header {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 8px 4px;
+    }
+    .rps-stats { font-size: 14px; color: var(--text-secondary); }
+    .rps-stats span { font-weight: 700; color: var(--brand-primary); }
+    .rps-winrate { font-size: 12px; color: var(--text-muted); }
+    .rps-diff-wrap {
+      display: flex; gap: 10px; width: 100%;
+      margin-bottom: 14px;
+    }
+    .rps-diff-btn {
+      flex: 1; height: 70px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-light);
+      background: var(--bg-card);
+      cursor: pointer;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2px;
+      transition: all 0.3s ease;
+    }
+    .rps-diff-btn:active { transform: scale(0.96); }
+    .rps-diff-btn.active { border-color: var(--brand-accent); background: var(--brand-accent-subtle); }
+    .rps-diff-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+    .rps-diff-sub { font-size: 11px; color: var(--text-muted); }
+    .rps-diff-btn.active .rps-diff-sub { color: var(--brand-accent); }
+    .rps-field {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; width: 100%; margin: 10px 0 6px;
+    }
+    .rps-choice {
+      font-size: 48px; width: 80px; height: 80px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: var(--bg-card);
+      box-shadow: var(--shadow-md);
+    }
+    .rps-vs { font-size: 20px; font-weight: 700; color: var(--text-muted); }
+    .rps-labels {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; width: 100%; margin: 0 0 4px;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+    }
+    .rps-labels span { width: 80px; text-align: center; }
+    .rps-labels span:nth-child(2) { width: auto; }
+    .rps-choices {
+      display: flex; gap: 14px; margin: 14px 0;
+    }
+    .rps-btn {
+      width: 64px; height: 64px; border-radius: 50%;
+      border: 2px solid var(--border-light);
+      background: var(--bg-card);
+      font-size: 30px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+    .rps-btn:active { transform: scale(0.9); border-color: var(--brand-accent); }
+    .rps-result {
+      font-size: 18px; font-weight: 700;
+      color: var(--text-primary);
+      margin: 6px 0 12px;
+      min-height: 28px;
+    }
+    .rps-restart {
+      height: 42px; border-radius: 999px;
+      border: 1px solid var(--border-light);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; padding: 0 20px;
+      margin-top: 4px;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .rps-restart:active { background: var(--bg-card-hover); }
+    @media (max-width: 400px) {
+      .nav-weather { padding: 4px 0 6px; gap: 5px; }
+      .nav-weather .weather-temp { font-size: 12px; }
+      .nav-weather .weather-icon { font-size: 14px; }
+      .nav-weather .weather-desc { font-size: 10px; }
+      .nav-weather .weather-div { height: 8px; }
+      .home-avatar { width: 110px; height: 110px; }
+      .home-title { font-size: 28px; }
+      .uptime-num { font-size: 24px; }
+      .uptime-unit { min-width: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== 粒子背景 ===== -->
+  <div class="particle-bg" id="particleBg"></div>
+
+  <!-- ===== 加载动画（商务简约） ===== -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loader-logo">Z</div>
+    <div class="loader-brand">泽璇电竞</div>
+    <div class="loader-sub">ZEXUAN Esports Club</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <!-- ===== 首页 ===== -->
+  <div class="page home-page active" id="homePage">
+    <div class="content-wrap">
+      <!-- 天气已移入底部导航栏 -->
+
+      <div class="home-avatar fade-up">
+        <img src="https://aka.doubaocdn.com/s/gFAj1wfHCn" alt="泽璇电竞" />
+      </div>
+      <h1 class="home-title fade-up d1">泽璇电竞</h1>
+      <p class="home-sub fade-up d2">ZEXUAN Esports Club</p>
+
+      <div class="home-btn-group fade-up d3">
+        <div class="home-btn-row">
+          <a href="https://qm.qq.com/q/cv4EK9ggcE" target="_blank" class="btn btn-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            当打手
+          </a>
+          <button class="btn btn-glass" onclick="showAbout()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            关于本站
+          </button>
+        </div>
+        <button class="btn btn-blue btn-pulse home-btn-center" onclick="showOfficial()">进入官网</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 关于本站 ===== -->
+  <div class="page about-page" id="aboutPage">
+    <button class="back-btn fade-up" onclick="showHome()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 8 12 15 6"/></svg>
+      返回
+    </button>
+    <div class="about-content">
+      <div class="about-text-card fade-up d1 card-shine">
+        <p>本站由：<br/>俱乐部副董事长独立开发部署<br/>为泽璇电竞而打造</p>
+        <p>反馈请联系QQ：2361932981<br/>邮箱：19135271540@163.com</p>
+        <p>开发技术：PHP + HTML + CSS + JS</p>
+      </div>
+      <div class="section-line fade-up d2"></div>
+      <div class="about-cards fade-up d2">
+        <div class="about-cards-row">
+          <div class="about-stat-card card-shine">
+            <div class="about-stat-value">500G</div>
+            <div class="about-stat-label">DDoS 防御</div>
+            <div class="about-progress"><div class="about-progress-bar"></div></div>
+          </div>
+          <div class="about-stat-card card-shine">
+            <div class="about-stat-value">80万</div>
+            <div class="about-stat-label">CC 防护</div>
+            <div class="about-progress"><div class="about-progress-bar"></div></div>
+          </div>
+        </div>
+        <div class="about-stat-card card-shine">
+          <div class="about-stat-value" style="font-size:22px;">JavaScript</div>
+          <div class="about-stat-label">交互逻辑</div>
+        </div>
+      </div>
+      <div class="about-tech-tag fade-up d3" onclick="showVersion('about')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        泽璇电竞授权官网 v1.0.5
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 官网页面 ===== -->
+  <div class="page official-page" id="officialPage">
+    <button class="back-btn fade-up" onclick="showHome()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 8 12 15 6"/></svg>
+      返回
+    </button>
+    <div class="official-content">
+      <!-- 首页标签 -->
+      <div class="tab-content active" id="tab-home">
+        <h2 class="tab-title welcome-title fade-up">欢迎来到泽璇电竞</h2>
+        <p class="tab-desc fade-up d1">专业的暗区突围俱乐部，为您提供最优质的游戏体验。拥有实力不俗的高质量打手，服务与态度一流，只为让您的游戏之旅更加畅快。</p>
+        <div class="section-line fade-up d2"></div>
+        <div class="club-card fade-up d2 card-shine">
+          <img class="club-avatar" src="https://aka.doubaocdn.com/s/gFAj1wfHCn" alt="泽璇电竞" />
+          <div>
+            <div class="club-name">泽璇电竞</div>
+            <div class="club-badge">至今已成立：1年+</div>
+          </div>
+        </div>
+        <div class="features-box fade-up d2">
+          <div class="features-head">四大保障</div>
+          <div class="feat-card"><h3>客服</h3><p>24小时企业微信客服快速响应，保障您的售后无忧</p></div>
+          <div class="feat-card"><h3>退款</h3><p>10分钟无人接单，可极速退款！无需担心您的钱款有去无回</p></div>
+          <div class="feat-card"><h3>真实</h3><p>所见所得、杜绝文字游戏！让您消费得明明白白</p></div>
+          <div class="feat-card"><h3>安全</h3><p>全程平台担保交易，下单安全有保障，从根上解决您的顾虑</p></div>
+        </div>
+        <div class="join-card fade-up d3 card-shine">
+          <div class="join-card-title">打手入驻待遇</div>
+          <div class="join-card-desc">节日奖金 接单补贴 新人优先接单 低抽成等等，待遇远胜于其他俱乐部。考核完全免费，且可免费提供详细的小程序使用教程，没有杂乱的处罚规定。还在等什么，抓紧点击下方"我要加入"一起携手共进吧！</div>
+          <a href="https://qm.qq.com/q/DMaR3o0cQo" target="_blank" class="btn-join">我要加入</a>
+        </div>
+        <div class="official-footnote fade-up d4">感谢您的信任</div>
+      </div>
+      <!-- 精选打手标签 -->
+      <div class="tab-content" id="tab-players">
+        <h2 class="tab-title fade-up players-title">前10精选打手</h2>
+        <p class="tab-desc fade-up d1">下面10位打手，都是俱乐部中实力不凡、好评如潮的顶级选手</p>
+        <div class="section-line fade-up d2"></div>
+        <div class="player-card fade-up card-shine" style="animation-delay:0.25s">
+          <div class="player-avatar"><img src="https://aka.doubaocdn.com/s/utEu1wfDKD" alt="泽璇.旋律" /><div class="rank-badge rank-1">1</div></div>
+          <div><div class="player-name">泽璇.旋律</div><div class="player-rate">好评率 ≈100%</div></div>
+        </div>
+        <div class="player-card fade-up card-shine" style="animation-delay:0.30s">
+          <div class="player-avatar"><img src="https://aka.doubaocdn.com/s/CZMb1wfDKD" alt="泽璇.一海" /><div class="rank-badge rank-2">2</div></div>
+          <div><div class="player-name">泽璇.一海</div><div class="player-rate">好评率 ≈100%</div></div>
+        </div>
+        <div class="player-card fade-up card-shine" style="animation-delay:0.35s">
+          <div class="player-avatar"><img src="https://aka.doubaocdn.com/s/JzTb1wfDKD" alt="泽璇.米老鼠" /><div class="rank-badge rank-3">3</div></div>
+          <div><div class="player-name">泽璇.米老鼠</div><div class="player-rate">好评率 ≈100%</div></div>
+        </div>
+        <div class="player-card fade-up card-shine" style="animation-delay:0.40s">
+          <div class="player-avatar"><img src="https://aka.doubaocdn.com/s/hCZK1wfDKD" alt="泽璇.老六" /></div>
+          <div><div class="player-name">泽璇.老六</div><div class="player-rate">好评率 ≈100%</div></div>
+        </div>
+        <div class="player-card fade-up card-shine" style="animation-delay:0.45s">
+          <div class="player-avatar"><img src="https://aka.doubaocdn.com/s/fk2F1wfDKD" alt="泽璇.看海" /></div>
+          <div><div class="player-name">泽璇.看海</div><div class="player-rate">好评率 ≈100%</div></div>
+        </div>
+        <div class="player-card fade-up card-shine" style="animation-delay:0.50s">
+          <div class="player-avatar"><img src="https://aka.doubaocdn.com/s/GIUY1wfDKD" alt="泽璇.芙芙" /></div>
+          <div><div class="player-name">泽璇.芙芙</div><div class="player-rate">好评率 ≈100%</div></div>
+        </div>
+        <div class="player-card fade-up card-shine" style="animation-delay:0.55s">
+          <div class="player-avatar"><img src="https://aka.doubaocdn.com/s/tbVA1wfDKD" alt="泽璇.残月" /></div>
+          <div><div class="player-name">泽璇.残月</div><div class="player-rate">好评率 ≈99%</div></div>
+        </div>
+        <div class="player-card fade-up card-shine" style="animation-delay:0.60s">
+          <div class="player-avatar"><img src="https://aka.doubaocdn.com/s/o50V1wfDKD" alt="泽璇.硬盘" /></div>
+          <div><div class="player-name">泽璇.硬盘</div><div class="player-rate">好评率 ≈100%</div></div>
+        </div>
+        <div class="player-card fade-up card-shine" style="animation-delay:0.65s">
+          <div class="player-avatar"><img src="https://aka.doubaocdn.com/s/JK8m1wfGqZ" alt="泽璇.曼珠沙华" /></div>
+          <div><div class="player-name">泽璇.曼珠沙华</div><div class="player-rate">好评率 ≈100%</div></div>
+        </div>
+        <div class="player-card fade-up card-shine" style="animation-delay:0.70s">
+          <div class="player-avatar"><img src="https://aka.doubaocdn.com/s/HtU71wfDKD" alt="泽璇.白色" /></div>
+          <div><div class="player-name">泽璇.白色</div><div class="player-rate">好评率 ≈99%</div></div>
+        </div>
+        <div class="tab-end-note fade-up" style="animation-delay:0.75s">仅显示上榜打手</div>
+      </div>
+      <!-- 老板评价标签 -->
+      <div class="tab-content" id="tab-reviews">
+        <h2 class="tab-title fade-up players-title">真实评价 · 做真实的自己</h2>
+        <p class="tab-desc fade-up d1">参考10条他人的评价，做出最明智的决定 <span class="refresh-badge">随机刷新</span></p>
+        <div class="section-line fade-up d2"></div>
+        <div class="review-card fade-up card-shine" style="animation-delay:0.25s">
+          <div class="review-header"><div class="review-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="review-user"><div class="review-name">*****</div><div class="review-stars">★★★★<span class="star-empty">★</span></div></div></div>
+          <div class="review-content">接单不是非常快</div><div class="review-line"></div>
+        </div>
+        <div class="review-card fade-up card-shine" style="animation-delay:0.30s">
+          <div class="review-header"><div class="review-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="review-user"><div class="review-name">*****</div><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-content">可以</div><div class="review-line"></div>
+        </div>
+        <div class="review-card fade-up card-shine" style="animation-delay:0.35s">
+          <div class="review-header"><div class="review-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="review-user"><div class="review-name">*****</div><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-content">挺好</div><div class="review-line"></div>
+        </div>
+        <div class="review-card fade-up card-shine" style="animation-delay:0.40s">
+          <div class="review-header"><div class="review-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="review-user"><div class="review-name">*****</div><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-content">好评</div><div class="review-line"></div>
+        </div>
+        <div class="review-card fade-up card-shine" style="animation-delay:0.45s">
+          <div class="review-header"><div class="review-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="review-user"><div class="review-name">*****</div><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-content">不卡保底</div><div class="review-line"></div>
+        </div>
+        <div class="review-card fade-up card-shine" style="animation-delay:0.50s">
+          <div class="review-header"><div class="review-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="review-user"><div class="review-name">*****</div><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-content">很稳</div><div class="review-line"></div>
+        </div>
+        <div class="review-card fade-up card-shine" style="animation-delay:0.55s">
+          <div class="review-header"><div class="review-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="review-user"><div class="review-name">*****</div><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-content">代起的装备非常全，一个投掷物都不少，牛逼</div><div class="review-line"></div>
+        </div>
+        <div class="review-card fade-up card-shine" style="animation-delay:0.60s">
+          <div class="review-header"><div class="review-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="review-user"><div class="review-name">*****</div><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-content">效率挺高的</div><div class="review-line"></div>
+        </div>
+        <div class="review-card fade-up card-shine" style="animation-delay:0.65s">
+          <div class="review-header"><div class="review-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="review-user"><div class="review-name">*****</div><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-content">打手互动性强，我问啥都会回答</div><div class="review-line"></div>
+        </div>
+        <div class="review-card fade-up card-shine" style="animation-delay:0.70s">
+          <div class="review-header"><div class="review-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="review-user"><div class="review-name">*****</div><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-content">下次还来</div><div class="review-line"></div>
+        </div>
+      </div>
+      <!-- 最新活动标签 -->
+      <div class="tab-content" id="tab-events">
+        <h2 class="events-title fade-up">关注最新活动</h2>
+        <p class="events-sub fade-up d1">提前了解新内容，真正的信息差，就在这里！</p>
+        <div class="section-line fade-up d2"></div>
+        <div class="event-card fade-up d2 card-shine" onclick="showEventDetail()">
+          <img class="event-card-img" src="https://aka.doubaocdn.com/s/95px1wf9Jx" alt="泽璇电竞周年庆" />
+          <div class="event-card-body">
+            <div class="event-card-title">泽璇电竞周年庆</div>
+            <div class="event-card-desc">超优惠、超多样 震撼来袭！</div>
+            <div class="event-card-action">
+              点击查看详情
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="tab-end-note fade-up d3">— 暂无更多活动规划 —</div>
+      </div>
+      <!-- 关于入驻标签 -->
+      <div class="tab-content" id="tab-fun">
+        <h2 class="tab-title fade-up" style="font-size:22px;">休闲娱乐 · 快意生活</h2>
+        <p class="tab-desc fade-up d1">放轻松~</p>
+        <div class="section-line fade-up d2"></div>
+        <div class="game-card fade-up d2 card-shine" onclick="showTetris()">
+          <div class="game-card-icon">🧩</div>
+          <div class="game-card-info">
+            <div class="game-card-title">俄罗斯方块</div>
+            <div class="game-card-desc">经典益智，触屏操作，挑战高分</div>
+          </div>
+          <svg class="game-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="game-card fade-up d3 card-shine" onclick="showGomoku()">
+          <div class="game-card-icon">♟</div>
+          <div class="game-card-info">
+            <div class="game-card-title">五子棋</div>
+            <div class="game-card-desc">双模式AI，较量你的棋力</div>
+          </div>
+          <svg class="game-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="game-card fade-up d4 card-shine" onclick="showRps()">
+          <div class="game-card-icon">✊</div>
+          <div class="game-card-info">
+            <div class="game-card-title">石头剪刀布</div>
+            <div class="game-card-desc">经典 永不过时！</div>
+          </div>
+          <svg class="game-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+      <!-- 关于入驻标签 -->
+      <div class="tab-content" id="tab-about-join">
+        <div class="fade-up d2" style="margin-top:8px;">
+          <button class="more-version-btn" onclick="showDonate()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            鼓励开发者
+          </button>
+        </div>
+        <div class="fade-up d2" style="margin-top:8px;">
+          <button class="more-version-btn" onclick="showVersion('more')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            更新日志
+          </button>
+        </div>
+        <div class="tab-end-note fade-up d3">一 持续更新中 一</div>
+      </div>
+    </div>
+    <!-- 底部毛玻璃导航栏（含天气） -->
+    <div class="nav-menu fade-up">
+      <div class="nav-items">
+        <div class="nav-item active" onclick="switchTab('home')">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>首页</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('players')">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>打手</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('reviews')">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span>评价</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('events')">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+          <span>活动</span>
+        </div>
+        <div class="nav-item nav-item-fun" onclick="switchTab('fun')">
+          <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          <span>娱乐</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('about-join')">
+          <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>更多</span>
+        </div>
+      </div>
+      <div class="nav-weather" id="weatherCard">
+        <span class="weather-icon" id="weatherIcon">☀️</span>
+        <span class="weather-temp" id="weatherTemp">--</span>
+        <span class="weather-div"></span>
+        <span class="weather-desc" id="weatherDesc">加载中</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 版本日志 ===== -->
+  <div class="page version-page" id="versionPage">
+    <div class="back-dual fade-up">
+      <button onclick="backFromVersion()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 8 12 15 6"/></svg>
+      </button>
+      <div class="back-dual-div"></div>
+      <button onclick="showHome()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </button>
+    </div>
+    <div class="version-content">
+      <h2 class="version-main-title fade-up d1">历代版本 · 更新日志</h2>
+      <div class="version-card fade-up d2 card-shine">
+        <div class="version-item">
+          <span>正式版（v1.0.5） 更新26.7.9</span>
+          <span class="tag current">当前</span>
+        </div>
+        <div class="version-divider"></div>
+        <div class="version-item">
+          <span>正式版（v1.0.4） 更新26.6.28</span>
+          
+        </div>
+        <div class="version-divider"></div>
+        <div class="version-item">
+          <span>正式版（v1.0.3） 更新26.6.26</span>
+          
+        </div>
+        <div class="version-divider"></div>
+        <div class="version-item">
+          <span>正式版（v1.0.2） 更新26.6.26</span>
+          
+        </div>
+        <div class="version-divider"></div>
+        <div class="version-item">
+          <span>测试版（v1.0.1） 更新26.6.24</span>
+          
+        </div>
+        <div class="version-divider"></div>
+        <div class="version-item">
+          <span>测试版（v1.0.0） 更新26.6.24</span>
+          
+        </div>
+      </div>
+
+      <!-- 服务器运行计时器 -->
+      <div class="uptime-section fade-up d3">
+        <div class="uptime-inner">
+          <div class="uptime-label">服务器稳定运行</div>
+          <div class="uptime-display" id="uptimeDisplay">
+            <div class="uptime-unit">
+              <span class="uptime-num" id="uptimeDays">00</span>
+              <span class="uptime-label-s">天</span>
+            </div>
+            <span class="uptime-sep">:</span>
+            <div class="uptime-unit">
+              <span class="uptime-num" id="uptimeHours">00</span>
+              <span class="uptime-label-s">时</span>
+            </div>
+            <span class="uptime-sep">:</span>
+            <div class="uptime-unit">
+              <span class="uptime-num" id="uptimeMins">00</span>
+              <span class="uptime-label-s">分</span>
+            </div>
+            <span class="uptime-sep">:</span>
+            <div class="uptime-unit">
+              <span class="uptime-num seconds" id="uptimeSecs">00</span>
+              <span class="uptime-label-s">秒</span>
+            </div>
+          </div>
+          <div class="uptime-status">
+            <span class="uptime-dot"></span>
+            所有功能运行正常
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 活动详情 ===== -->
+  <div class="page event-detail-page" id="eventDetailPage">
+    <div class="back-dual fade-up">
+      <button onclick="backToEvents()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 8 12 15 6"/></svg>
+      </button>
+      <div class="back-dual-div"></div>
+      <button onclick="showHome()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </button>
+    </div>
+    <div class="event-detail-content">
+      <div class="event-detail-card fade-up d1 card-shine">
+        <img class="event-detail-img" src="https://aka.doubaocdn.com/s/95px1wf9Jx" alt="泽璇电竞1周年" />
+        <div class="event-detail-text">
+          <p>泽璇电竞1周年活动，为了感谢各位老板这一年的支持，无论是老顾客还是新人，能在鱼龙混杂的俱乐部中选择我们 是我们最大的荣幸。目标计划推出某种限时一周的超级福利，以回馈各位的倾力支持</p>
+          <p>预计于8月左右实施</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 鼓励开发者页面 ===== -->
+  <div class="page donate-page" id="donatePage">
+    <button class="back-btn fade-up" onclick="backFromDonate()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 8 12 15 6"/></svg>
+      返回
+    </button>
+    <div class="donate-content">
+      <div class="donate-card fade-up d1 card-shine">
+        <div class="donate-text">日行一善，德润心田，感恩不已</div>
+        <button class="btn-donate" onclick="showDonateModal()">赞赏</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 赞赏弹窗 ===== -->
+  <div class="modal-overlay" id="donateModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeDonateModal()">✕</button>
+      <div class="modal-title">鼓励 从这里开始</div>
+      <div class="modal-sub">截图微信扫描下方二维码</div>
+      <div class="modal-qr">二维码预留位<br/>（请放置您的收款码）</div>
+    </div>
+  </div>
+
+  <!-- ===== 俄罗斯方块 ===== -->
+  <div class="page tetris-page" id="tetrisPage">
+    <button class="back-btn fade-up" onclick="backFromTetris()" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.1);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 8 12 15 6"/></svg>
+      返回
+    </button>
+    <div class="tetris-content">
+      <div class="tetris-header">
+        <div class="tetris-score">得分 <span id="tetrisScore">0</span></div>
+        <div class="tetris-records">胜 <span id="tetrisWins">0</span> · 负 <span id="tetrisLosses">0</span></div>
+      </div>
+      <div class="tetris-notify" id="tetrisNotify"></div>
+      <div class="tetris-board-wrap">
+        <canvas id="tetrisCanvas" width="240" height="480"></canvas>
+        <div class="tetris-overlay" id="tetrisOverlay">
+          <div class="tetris-overlay-text" id="tetrisResult"></div>
+          <div class="tetris-overlay-sub" id="tetrisSub"></div>
+          <button class="tetris-overlay-btn" onclick="tetrisRestart()">再来一局</button>
+        </div>
+      </div>
+      <div class="tetris-controls">
+        <div></div>
+        <div class="tetris-btn" onpointerdown="tetrisRotate()" ontouchstart="tetrisRotate()">↻</div>
+        <div></div>
+        <div class="tetris-btn" onpointerdown="tetrisMove(-1)" ontouchstart="tetrisMove(-1)">◀</div>
+        <div class="tetris-btn" onpointerdown="tetrisDrop()" ontouchstart="tetrisDrop()">▼</div>
+        <div class="tetris-btn" onpointerdown="tetrisMove(1)" ontouchstart="tetrisMove(1)">▶</div>
+      </div>
+      <div class="tetris-btn tetris-btn-wide" onpointerdown="tetrisRestart()" ontouchstart="tetrisRestart()">重新开始</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;text-align:center;">得500分即胜利</div>
+    </div>
+  </div>
+
+  <!-- ===== 五子棋 ===== -->
+  <div class="page goban-page" id="gobanPage">
+    <button class="back-btn fade-up" onclick="backFromGoban()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 8 12 15 6"/></svg>
+      返回
+    </button>
+    <div class="goban-content">
+      <div class="goban-header">
+        <div class="goban-stats">⚫ <span id="gobanWins">0</span> 胜 · <span id="gobanLosses">0</span> 负</div>
+        <div class="goban-winrate" id="gobanRate">胜率 --</div>
+      </div>
+      <div class="goban-diff-wrap">
+        <div class="goban-diff-btn active" id="gobanEasy" onclick="gobanSetDiff('easy')">
+          <div class="goban-diff-name">😊 菜鸟难度</div>
+          <div class="goban-diff-sub">赢不了就回家种田吧</div>
+        </div>
+        <div class="goban-diff-btn" id="gobanHard" onclick="gobanSetDiff('hard')">
+          <div class="goban-diff-name">😱 噩梦难度</div>
+          <div class="goban-diff-sub">吓哭了</div>
+        </div>
+      </div>
+      <div class="goban-board-wrap">
+        <canvas id="gobanCanvas" width="330" height="330"></canvas>
+        <div class="goban-overlay" id="gobanOverlay">
+          <div class="goban-overlay-text" id="gobanResult"></div>
+          <div class="goban-overlay-sub" id="gobanSub"></div>
+          <button class="goban-overlay-btn" onclick="gobanCloseOverlay()">行</button>
+        </div>
+      </div>
+      <div class="goban-turn" id="gobanTurn">你的回合（黑棋）</div>
+      <button class="goban-restart" onclick="gobanRestart()">↻ 重新开局</button>
+    </div>
+  </div>
+
+  <!-- ===== 石头剪刀布 ===== -->
+  <div class="page rps-page" id="rpsPage">
+    <button class="back-btn fade-up" onclick="backFromRps()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 8 12 15 6"/></svg>
+      返回
+    </button>
+    <div class="rps-content">
+      <div class="rps-header">
+        <div class="rps-stats">✊ <span id="rpsWins">0</span> 胜 · <span id="rpsLosses">0</span> 负</div>
+        <div class="rps-winrate" id="rpsRate">胜率 --</div>
+      </div>
+      <div class="rps-diff-wrap">
+        <div class="rps-diff-btn active" id="rpsEasy" onclick="rpsSetDiff('easy')">
+          <div class="rps-diff-name">😊 新手难度</div>
+          <div class="rps-diff-sub">碰碰运气</div>
+        </div>
+        <div class="rps-diff-btn" id="rpsHard" onclick="rpsSetDiff('hard')">
+          <div class="rps-diff-name">😈 毁灭难度</div>
+          <div class="rps-diff-sub">超级记忆 预判你的习惯</div>
+        </div>
+      </div>
+      <div class="rps-field">
+        <div class="rps-choice" id="rpsPlayer"></div>
+        <div class="rps-vs">VS</div>
+        <div class="rps-choice" id="rpsAI"></div>
+      </div>
+      <div class="rps-labels"><span>我</span><span></span><span>AI</span></div>
+      <div class="rps-result" id="rpsResult">选择你的招式</div>
+      <div class="rps-choices">
+        <div class="rps-btn" onclick="rpsPlay(0)">✊</div>
+        <div class="rps-btn" onclick="rpsPlay(1)">✋</div>
+        <div class="rps-btn" onclick="rpsPlay(2)">✌️</div>
+      </div>
+      <button class="rps-restart" onclick="rpsReset()">↻ 重置统计</button>
+    </div>
+  </div>
+
+  <script>
+    /* ===== 多色粒子背景生成 ===== */
+    (function initParticles() {
+      var container = document.getElementById('particleBg');
+      if (!container) return;
+      var types = ['p-gold', 'p-blue', 'p-warm'];
+      var count = 60;
+      for (var i = 0; i < count; i++) {
+        var dot = document.createElement('span');
+        var size = Math.random() * 6 + 2;
+        dot.className = types[Math.floor(Math.random() * types.length)];
+        dot.style.width = size + 'px';
+        dot.style.height = size + 'px';
+        dot.style.left = Math.random() * 100 + '%';
+        dot.style.animationDuration = (Math.random() * 25 + 18) + 's';
+        dot.style.animationDelay = (Math.random() * 25) + 's';
+        container.appendChild(dot);
+      }
+    })();
+
+    /* ===== 加载动画隐藏 ===== */
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        var loading = document.getElementById('loadingScreen');
+        if (!loading) return;
+        loading.classList.add('hide');
+        setTimeout(function() { loading.style.display = 'none'; }, 600);
+      }, 1600);
+    });
+
+    /* ===== 重放动画 ===== */
+    function replayAnimation(elements) {
+      if (!elements || !elements.length) return;
+      for (var i = 0; i < elements.length; i++) {
+        var el = elements[i];
+        if (!el) continue;
+        el.style.animation = 'none';
+        void el.offsetHeight;
+        el.style.animation = '';
+      }
+    }
+
+    /* ===== 页面切换 ===== */
+    function hideAllPages() {
+      var pages = document.querySelectorAll('.page');
+      for (var i = 0; i < pages.length; i++) {
+        pages[i].classList.remove('active');
+      }
+    }
+
+    function showAbout() {
+      hideAllPages();
+      document.getElementById('aboutPage').classList.add('active');
+      window.scrollTo(0, 0);
+      replayAnimation(document.querySelectorAll('#aboutPage .fade-up'));
+    }
+
+    function showOfficial() {
+      hideAllPages();
+      document.getElementById('officialPage').classList.add('active');
+      window.scrollTo(0, 0);
+      switchTab('home');
+      replayAnimation(document.querySelectorAll('#officialPage .fade-up'));
+    }
+
+    function showHome() {
+      hideAllPages();
+      document.getElementById('homePage').classList.add('active');
+      window.scrollTo(0, 0);
+      replayAnimation(document.querySelectorAll('#homePage .fade-up'));
+      fetchWeather();
+    }
+
+    function showVersion(from) {
+      if (from) versionFrom = from;
+      hideAllPages();
+      document.getElementById('versionPage').classList.add('active');
+      window.scrollTo(0, 0);
+      replayAnimation(document.querySelectorAll('#versionPage .fade-up'));
+      updateUptime();
+    }
+
+    var versionFrom = 'about';
+
+    function backFromVersion() {
+      if (versionFrom === 'more') {
+        hideAllPages();
+        document.getElementById('officialPage').classList.add('active');
+        switchTab('about-join');
+        window.scrollTo(0, 0);
+      } else {
+        showAbout();
+      }
+    }
+
+    function showEventDetail() {
+      hideAllPages();
+      document.getElementById('eventDetailPage').classList.add('active');
+      window.scrollTo(0, 0);
+      replayAnimation(document.querySelectorAll('#eventDetailPage .fade-up'));
+    }
+
+    function backToEvents() {
+      hideAllPages();
+      document.getElementById('officialPage').classList.add('active');
+      switchTab('events');
+      window.scrollTo(0, 0);
+    }
+
+    /* ===== 鼓励开发者 ===== */
+    function showDonate() {
+      hideAllPages();
+      document.getElementById('donatePage').classList.add('active');
+      window.scrollTo(0, 0);
+      replayAnimation(document.querySelectorAll('#donatePage .fade-up'));
+    }
+    function backFromDonate() {
+      hideAllPages();
+      document.getElementById('officialPage').classList.add('active');
+      switchTab('about-join');
+      window.scrollTo(0, 0);
+    }
+    function showDonateModal() {
+      document.getElementById('donateModal').classList.add('active');
+    }
+    function closeDonateModal() {
+      document.getElementById('donateModal').classList.remove('active');
+    }
+
+    /* ===== 俄罗斯方块 ===== */
+    var tetrisWins = 0, tetrisLosses = 0;
+    var tetrisScore = 0, tetrisRunning = false;
+    var tetrisBoard, tetrisCurrent, tetrisTimer;
+    var tetrisCols = 10, tetrisRows = 20, tetrisBlock = 24;
+    var tetrisShapes = [
+      [[1,1,1,1]],
+      [[1,1],[1,1]],
+      [[1,0,0],[1,1,1]],
+      [[0,0,1],[1,1,1]],
+      [[0,1,0],[1,1,1]],
+      [[0,1,1],[1,1,0]],
+      [[1,1,0],[0,1,1]]
+    ];
+    var tetrisColors = ['#00f0f0','#f0f000','#f0a000','#0000f0','#a000f0','#00f000','#f00000'];
+
+    function showTetris() {
+      hideAllPages();
+      document.getElementById('tetrisPage').classList.add('active');
+      window.scrollTo(0, 0);
+      tetrisShowStart();
+    }
+    function tetrisShowStart() {
+      if (tetrisTimer) { clearInterval(tetrisTimer); tetrisTimer = null; }
+      tetrisRunning = false;
+      document.getElementById('tetrisOverlay').classList.add('show');
+      document.getElementById('tetrisResult').textContent = '俄罗斯方块';
+      document.getElementById('tetrisSub').textContent = '';
+      var btn = document.getElementById('tetrisOverlay').querySelector('.tetris-overlay-btn');
+      btn.textContent = '开始游戏';
+      btn.onclick = function() { tetrisInit(); btn.textContent = '再来一局'; btn.onclick = tetrisRestart; };
+    }
+    function backFromTetris() {
+      hideAllPages();
+      document.getElementById('officialPage').classList.add('active');
+      switchTab('fun');
+      window.scrollTo(0, 0);
+    }
+    function tetrisInit() {
+      tetrisScore = 0; tetrisRunning = true;
+      tetrisBoard = [];
+      for (var r = 0; r < tetrisRows; r++) {
+        tetrisBoard[r] = [];
+        for (var c = 0; c < tetrisCols; c++) tetrisBoard[r][c] = 0;
+      }
+      document.getElementById('tetrisScore').textContent = '0';
+      document.getElementById('tetrisOverlay').classList.remove('show');
+      tetrisSpawn();
+      if (tetrisTimer) clearInterval(tetrisTimer);
+      tetrisTimer = setInterval(tetrisTick, 500);
+      tetrisDraw();
+    }
+    function tetrisSpawn() {
+      var idx = Math.floor(Math.random() * tetrisShapes.length);
+      tetrisCurrent = {
+        shape: tetrisShapes[idx], color: tetrisColors[idx],
+        x: Math.floor((tetrisCols - tetrisShapes[idx][0].length) / 2), y: 0
+      };
+      if (tetrisCollide()) tetrisGameOver(false);
+    }
+    function tetrisCollide() {
+      var s = tetrisCurrent.shape, x = tetrisCurrent.x, y = tetrisCurrent.y;
+      for (var r = 0; r < s.length; r++)
+        for (var c = 0; c < s[r].length; c++)
+          if (s[r][c]) {
+            var nx = x + c, ny = y + r;
+            if (nx < 0 || nx >= tetrisCols || ny >= tetrisRows) return true;
+            if (ny >= 0 && tetrisBoard[ny][nx]) return true;
+          }
+      return false;
+    }
+    function tetrisMerge() {
+      var s = tetrisCurrent.shape, x = tetrisCurrent.x, y = tetrisCurrent.y;
+      for (var r = 0; r < s.length; r++)
+        for (var c = 0; c < s[r].length; c++)
+          if (s[r][c] && y + r >= 0) tetrisBoard[y + r][x + c] = tetrisCurrent.color;
+    }
+    function tetrisClearLines() {
+      var cleared = 0;
+      for (var r = tetrisRows - 1; r >= 0; r--) {
+        var full = true;
+        for (var c = 0; c < tetrisCols; c++) if (!tetrisBoard[r][c]) { full = false; break; }
+        if (full) {
+          tetrisBoard.splice(r, 1);
+          tetrisBoard.unshift(new Array(tetrisCols).fill(0));
+          cleared++; r++;
+        }
+      }
+      if (cleared > 0) {
+        tetrisScore += cleared * 100;
+        document.getElementById('tetrisScore').textContent = tetrisScore;
+        var n = document.getElementById('tetrisNotify');
+        n.textContent = '消行 +' + (cleared * 100);
+        n.classList.add('show');
+        setTimeout(function() { n.classList.remove('show'); }, 2000);
+        if (tetrisScore >= 500) tetrisGameOver(true);
+      }
+    }
+    function tetrisTick() {
+      if (!tetrisRunning) return;
+      tetrisCurrent.y++;
+      if (tetrisCollide()) {
+        tetrisCurrent.y--;
+        tetrisMerge();
+        tetrisClearLines();
+        tetrisSpawn();
+      }
+      tetrisDraw();
+    }
+    function tetrisDraw() {
+      var c = document.getElementById('tetrisCanvas');
+      if (!c) return;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#0f0f23';
+      ctx.fillRect(0, 0, tetrisCols * tetrisBlock, tetrisRows * tetrisBlock);
+      for (var r = 0; r < tetrisRows; r++)
+        for (var cl = 0; cl < tetrisCols; cl++)
+          if (tetrisBoard[r][cl]) {
+            ctx.fillStyle = tetrisBoard[r][cl];
+            ctx.fillRect(cl * tetrisBlock, r * tetrisBlock, tetrisBlock - 1, tetrisBlock - 1);
+          }
+      if (tetrisCurrent) {
+        var s = tetrisCurrent.shape;
+        ctx.fillStyle = tetrisCurrent.color;
+        for (var r = 0; r < s.length; r++)
+          for (var c2 = 0; c2 < s[r].length; c2++)
+            if (s[r][c2]) {
+              ctx.fillRect((tetrisCurrent.x + c2) * tetrisBlock, (tetrisCurrent.y + r) * tetrisBlock, tetrisBlock - 1, tetrisBlock - 1);
+            }
+      }
+    }
+    function tetrisMove(dx) {
+      if (!tetrisRunning) return;
+      tetrisCurrent.x += dx;
+      if (tetrisCollide()) tetrisCurrent.x -= dx;
+      tetrisDraw();
+    }
+    function tetrisRotate() {
+      if (!tetrisRunning) return;
+      var s = tetrisCurrent.shape, rotated = [];
+      for (var c = 0; c < s[0].length; c++) {
+        rotated[c] = [];
+        for (var r = s.length - 1; r >= 0; r--) rotated[c].push(s[r][c]);
+      }
+      var old = tetrisCurrent.shape;
+      tetrisCurrent.shape = rotated;
+      if (tetrisCollide()) tetrisCurrent.shape = old;
+      tetrisDraw();
+    }
+    function tetrisDrop() {
+      if (!tetrisRunning) return;
+      while (!tetrisCollide()) tetrisCurrent.y++;
+      tetrisCurrent.y--;
+      tetrisMerge(); tetrisClearLines(); tetrisSpawn();
+      tetrisDraw();
+    }
+    function tetrisGameOver(win) {
+      tetrisRunning = false;
+      if (tetrisTimer) { clearInterval(tetrisTimer); tetrisTimer = null; }
+      if (win) { tetrisWins++; document.getElementById('tetrisResult').textContent = '🎉 胜利！'; }
+      else { tetrisLosses++; document.getElementById('tetrisResult').textContent = '💀 失败'; }
+      document.getElementById('tetrisSub').textContent = '得分: ' + tetrisScore;
+      document.getElementById('tetrisWins').textContent = tetrisWins;
+      document.getElementById('tetrisLosses').textContent = tetrisLosses;
+      document.getElementById('tetrisOverlay').classList.add('show');
+    }
+    function tetrisRestart() { tetrisInit(); }
+
+    /* ===== 五子棋 ===== */
+    var gobanSize = 15, gobanCell = 22;
+    var gobanBoard, gobanTurn_p = 1;
+    var gobanEasyWins = 0, gobanEasyLosses = 0;
+    var gobanHardWins = 0, gobanHardLosses = 0;
+    var gobanDiff = 'easy', gobanOver = false, gobanStarted = false;
+
+    function showGomoku() {
+      hideAllPages();
+      document.getElementById('gobanPage').classList.add('active');
+      window.scrollTo(0, 0);
+      if (!gobanBoard) gobanInit();
+      gobanUpdateStats();
+    }
+    function backFromGoban() {
+      hideAllPages();
+      document.getElementById('officialPage').classList.add('active');
+      switchTab('fun');
+      window.scrollTo(0, 0);
+    }
+    function gobanInit() {
+      gobanBoard = []; gobanTurn_p = 1; gobanOver = false; gobanStarted = true;
+      for (var r = 0; r < gobanSize; r++) {
+        gobanBoard[r] = [];
+        for (var c = 0; c < gobanSize; c++) gobanBoard[r][c] = 0;
+      }
+      document.getElementById('gobanOverlay').classList.remove('show');
+      document.getElementById('gobanTurn').textContent = '你的回合（黑棋）';
+      gobanDraw();
+    }
+    function gobanDraw() {
+      var c = document.getElementById('gobanCanvas');
+      if (!c) return;
+      var ctx = c.getContext('2d');
+      var size = gobanSize, cell = gobanCell, pad = 22;
+      var total = (size - 1) * cell + pad * 2;
+      ctx.fillStyle = '#dcb35c';
+      ctx.fillRect(0, 0, total, total);
+      ctx.strokeStyle = '#8b6914';
+      ctx.lineWidth = 0.5;
+      for (var i = 0; i < size; i++) {
+        var p = pad + i * cell;
+        ctx.beginPath(); ctx.moveTo(pad, p); ctx.lineTo(pad + (size-1)*cell, p); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(p, pad); ctx.lineTo(p, pad + (size-1)*cell); ctx.stroke();
+      }
+      for (var r = 0; r < size; r++)
+        for (var c2 = 0; c2 < size; c2++) {
+          if (gobanBoard[r][c2] === 1) {
+            ctx.beginPath();
+            ctx.arc(pad + c2 * cell, pad + r * cell, cell/2 - 3, 0, Math.PI*2);
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fill();
+          } else if (gobanBoard[r][c2] === 2) {
+            ctx.beginPath();
+            ctx.arc(pad + c2 * cell, pad + r * cell, cell/2 - 3, 0, Math.PI*2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+    }
+    function gobanClick(e) {
+      if (gobanOver || gobanTurn_p !== 1) return;
+      var rect = document.getElementById('gobanCanvas').getBoundingClientRect();
+      var x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+      var y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+      var pad = 22, cell = gobanCell;
+      var col = Math.round((x - pad) / cell);
+      var row = Math.round((y - pad) / cell);
+      if (col < 0 || col >= gobanSize || row < 0 || row >= gobanSize) return;
+      if (gobanBoard[row][col] !== 0) return;
+      gobanBoard[row][col] = 1;
+      gobanDraw();
+      if (gobanCheckWin(row, col, 1)) { gobanEnd(true); return; }
+      gobanTurn_p = 2;
+      document.getElementById('gobanTurn').textContent = 'AI 思考中...';
+      setTimeout(gobanAI, 150);
+    }
+    function gobanAI() {
+      var best = gobanDiff === 'hard' ? gobanGetBestHard() : gobanGetBestEasy();
+      if (!best) return;
+      gobanBoard[best.r][best.c] = 2;
+      gobanDraw();
+      if (gobanCheckWin(best.r, best.c, 2)) { gobanEnd(false); return; }
+      gobanTurn_p = 1;
+      document.getElementById('gobanTurn').textContent = '你的回合（黑棋）';
+    }
+    function gobanGetBestEasy() {
+      var empty = [];
+      for (var r = 0; r < gobanSize; r++)
+        for (var c = 0; c < gobanSize; c++)
+          if (!gobanBoard[r][c]) empty.push({r:r, c:c});
+      if (empty.length === 0) return null;
+      for (var r = 0; r < gobanSize; r++)
+        for (var c = 0; c < gobanSize; c++)
+          if (!gobanBoard[r][c]) {
+            gobanBoard[r][c] = 1;
+            if (gobanCheckWin(r, c, 1)) { gobanBoard[r][c] = 0; return {r:r, c:c}; }
+            gobanBoard[r][c] = 0;
+          }
+      var best = empty[Math.floor(Math.random() * empty.length)];
+      var center = 7;
+      for (var i = 0; i < empty.length; i++) {
+        var score = Math.abs(empty[i].r - center) + Math.abs(empty[i].c - center);
+        if (Math.random() < 0.3) continue;
+        var br = empty[i].r, bc = empty[i].c;
+        if (br > 0 && gobanBoard[br-1][bc]) score -= 3;
+        if (br < gobanSize-1 && gobanBoard[br+1][bc]) score -= 3;
+        if (bc > 0 && gobanBoard[br][bc-1]) score -= 3;
+        if (bc < gobanSize-1 && gobanBoard[br][bc+1]) score -= 3;
+        if (score < 2) best = empty[i];
+      }
+      return best;
+    }
+    function gobanGetBestHard() {
+      var bestScore = -Infinity, bestMove = null;
+      for (var r = 0; r < gobanSize; r++)
+        for (var c = 0; c < gobanSize; c++)
+          if (!gobanBoard[r][c]) {
+            var sc = gobanEval(r, c, 2) * 1.1 + gobanEval(r, c, 1);
+            if (sc > bestScore) { bestScore = sc; bestMove = {r:r, c:c}; }
+          }
+      return bestMove;
+    }
+    function gobanEval(r, c, player) {
+      var score = 0;
+      var dirs = [[1,0],[0,1],[1,1],[1,-1]];
+      for (var d = 0; d < dirs.length; d++) {
+        var count = 1, open = 0;
+        var dr = dirs[d][0], dc = dirs[d][1];
+        for (var s = 1; s <= 4; s++) {
+          var nr = r + dr * s, nc = c + dc * s;
+          if (nr < 0 || nr >= gobanSize || nc < 0 || nc >= gobanSize) break;
+          if (gobanBoard[nr][nc] === player) count++;
+          else if (gobanBoard[nr][nc] === 0) { open++; break; }
+          else break;
+        }
+        for (var s = 1; s <= 4; s++) {
+          var nr2 = r - dr * s, nc2 = c - dc * s;
+          if (nr2 < 0 || nr2 >= gobanSize || nc2 < 0 || nc2 >= gobanSize) break;
+          if (gobanBoard[nr2][nc2] === player) count++;
+          else if (gobanBoard[nr2][nc2] === 0) { open++; break; }
+          else break;
+        }
+        if (count >= 5) score += 100000;
+        else if (count === 4 && open > 0) score += open * 5000;
+        else if (count === 3 && open > 0) score += count * 1000;
+        else if (count === 2 && open > 0) score += count * 100;
+        else if (count > 1) score += count * 10;
+      }
+      return score;
+    }
+    function gobanCheckWin(r, c, player) {
+      var dirs = [[1,0],[0,1],[1,1],[1,-1]];
+      for (var d = 0; d < dirs.length; d++) {
+        var count = 1;
+        var dr = dirs[d][0], dc = dirs[d][1];
+        for (var s = 1; s <= 4; s++) {
+          var nr = r + dr * s, nc = c + dc * s;
+          if (nr < 0 || nr >= gobanSize || nc < 0 || nc >= gobanSize) break;
+          if (gobanBoard[nr][nc] === player) count++; else break;
+        }
+        for (var s = 1; s <= 4; s++) {
+          var nr2 = r - dr * s, nc2 = c - dc * s;
+          if (nr2 < 0 || nr2 >= gobanSize || nc2 < 0 || nc2 >= gobanSize) break;
+          if (gobanBoard[nr2][nc2] === player) count++; else break;
+        }
+        if (count >= 5) return true;
+      }
+      return false;
+    }
+    function gobanEnd(win) {
+      gobanOver = true;
+      if (win) {
+        if (gobanDiff === 'hard') gobanHardWins++; else gobanEasyWins++;
+        document.getElementById('gobanResult').textContent = '🎉 你赢了！';
+      } else {
+        if (gobanDiff === 'hard') gobanHardLosses++; else gobanEasyLosses++;
+        document.getElementById('gobanResult').textContent = '💀 AI 赢了';
+      }
+      var msg = gobanDiff === 'hard' ? '噩梦难度就是不一样...' : '多练练吧 😅';
+      document.getElementById('gobanSub').textContent = msg;
+      var w = gobanDiff === 'hard' ? gobanHardWins : gobanEasyWins;
+      var l = gobanDiff === 'hard' ? gobanHardLosses : gobanEasyLosses;
+      var t = w + l;
+      document.getElementById('gobanWins').textContent = w;
+      document.getElementById('gobanLosses').textContent = l;
+      var rate = t > 0 ? Math.round(w / t * 100) : 0;
+      document.getElementById('gobanRate').textContent = '胜率 ' + rate + '%';
+      document.getElementById('gobanTurn').textContent = win ? '你赢了！' : 'AI 获胜';
+      document.getElementById('gobanOverlay').classList.add('show');
+    }
+    function gobanRestart() { gobanInit(); }
+    function gobanUpdateStats() {
+      var w = gobanDiff === 'hard' ? gobanHardWins : gobanEasyWins;
+      var l = gobanDiff === 'hard' ? gobanHardLosses : gobanEasyLosses;
+      var t = w + l;
+      document.getElementById('gobanWins').textContent = w;
+      document.getElementById('gobanLosses').textContent = l;
+      document.getElementById('gobanRate').textContent = t > 0 ? '胜率 ' + Math.round(w / t * 100) + '%' : '胜率 --';
+    }
+    function gobanSetDiff(d) {
+      gobanDiff = d;
+      document.getElementById('gobanEasy').classList.toggle('active', d === 'easy');
+      document.getElementById('gobanHard').classList.toggle('active', d === 'hard');
+      gobanInit();
+      gobanUpdateStats();
+    }
+    function gobanCloseOverlay() {
+      document.getElementById('gobanOverlay').classList.remove('show');
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      var cv = document.getElementById('gobanCanvas');
+      if (cv) {
+        cv.addEventListener('click', gobanClick);
+        cv.addEventListener('touchstart', function(e) { e.preventDefault(); gobanClick(e); });
+      }
+    });
+
+    /* ===== 石头剪刀布 ===== */
+    var rpsEasyWins = 0, rpsEasyLosses = 0;
+    var rpsHardWins = 0, rpsHardLosses = 0;
+    var rpsDiff = 'easy';
+    var rpsEmoji = ['✊','✋','✌️'];
+    var rpsHistory = [];
+
+    function showRps() {
+      hideAllPages();
+      document.getElementById('rpsPage').classList.add('active');
+      window.scrollTo(0, 0);
+    }
+    function backFromRps() {
+      hideAllPages();
+      document.getElementById('officialPage').classList.add('active');
+      switchTab('fun');
+      window.scrollTo(0, 0);
+    }
+    function rpsPlay(p) {
+      var ai;
+      if (rpsDiff === 'easy') {
+        ai = Math.floor(Math.random() * 3);
+      } else {
+        ai = rpsPredict();
+      }
+      document.getElementById('rpsPlayer').textContent = rpsEmoji[p];
+      document.getElementById('rpsAI').textContent = rpsEmoji[ai];
+      var result = (p - ai + 3) % 3;
+      if (result === 0) {
+        document.getElementById('rpsResult').textContent = '平局！';
+      } else if (result === 1) {
+        if (rpsDiff === 'hard') rpsHardWins++; else rpsEasyWins++;
+        document.getElementById('rpsResult').textContent = '🎉 你赢了！';
+      } else {
+        if (rpsDiff === 'hard') rpsHardLosses++; else rpsEasyLosses++;
+        document.getElementById('rpsResult').textContent = '💀 AI 赢了';
+      }
+      rpsHistory.push(p);
+      rpsUpdateStats();
+    }
+    function rpsPredict() {
+      if (rpsHistory.length < 3) return Math.floor(Math.random() * 3);
+      var last = rpsHistory.slice(-3);
+      var counts = [0,0,0];
+      for (var i = 0; i < rpsHistory.length - 2; i++) {
+        if (rpsHistory[i] === last[0] && rpsHistory[i+1] === last[1]) {
+          counts[rpsHistory[i+2]]++;
+        }
+      }
+      var max = Math.max(counts[0], counts[1], counts[2]);
+      if (max === 0) return Math.floor(Math.random() * 3);
+      var predicted = counts.indexOf(max);
+      return (predicted + 1) % 3;
+    }
+    function rpsUpdateStats() {
+      var w = rpsDiff === 'hard' ? rpsHardWins : rpsEasyWins;
+      var l = rpsDiff === 'hard' ? rpsHardLosses : rpsEasyLosses;
+      document.getElementById('rpsWins').textContent = w;
+      document.getElementById('rpsLosses').textContent = l;
+      var t = w + l;
+      document.getElementById('rpsRate').textContent = t > 0 ? '胜率 ' + Math.round(w / t * 100) + '%' : '胜率 --';
+    }
+    function rpsSetDiff(d) {
+      rpsDiff = d;
+      document.getElementById('rpsEasy').classList.toggle('active', d === 'easy');
+      document.getElementById('rpsHard').classList.toggle('active', d === 'hard');
+      rpsUpdateStats();
+    }
+    function rpsReset() {
+      rpsEasyWins = 0; rpsEasyLosses = 0; rpsHardWins = 0; rpsHardLosses = 0;
+      rpsHistory = [];
+      document.getElementById('rpsPlayer').textContent = '';
+      document.getElementById('rpsAI').textContent = '';
+      document.getElementById('rpsResult').textContent = '统计已重置';
+      rpsUpdateStats();
+    }
+
+    /* ===== 标签页切换 ===== */
+    function switchTab(tabName) {
+      var navItems = document.querySelectorAll('.nav-item');
+      for (var i = 0; i < navItems.length; i++) {
+        navItems[i].classList.remove('active');
+      }
+      var tabMap = { home: 0, players: 1, reviews: 2, events: 3, fun: 4, 'about-join': 5 };
+      if (navItems[tabMap[tabName]]) {
+        navItems[tabMap[tabName]].classList.add('active');
+      }
+
+      var tabContents = document.querySelectorAll('.tab-content');
+      for (var j = 0; j < tabContents.length; j++) {
+        tabContents[j].classList.remove('active');
+      }
+      var target = document.getElementById('tab-' + tabName);
+      if (target) {
+        target.classList.add('active');
+        replayAnimation(target.querySelectorAll('.fade-up'));
+      }
+      window.scrollTo(0, 0);
+    }
+
+    /* ===== 天气 API（三重保障：浏览器定位 → ip-api → 上海默认） ===== */
+    function fetchWeather() {
+      var tempEl = document.getElementById('weatherTemp');
+      var iconEl = document.getElementById('weatherIcon');
+      var descEl = document.getElementById('weatherDesc');
+      if (!tempEl || !iconEl || !descEl) return;
+
+      // 第一重：浏览器地理定位
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+          fetchOpenMeteo(pos.coords.latitude, pos.coords.longitude);
+        }, function() {
+          fetchByIP();
+        }, { timeout: 4000, enableHighAccuracy: false });
+      } else {
+        fetchByIP();
+      }
+    }
+
+    function fetchByIP() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://ip-api.com/json/?fields=city,lat,lon', true);
+      xhr.timeout = 4000;
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          try {
+            var loc = JSON.parse(xhr.responseText);
+            if (loc.city) {/* city unused */}
+            fetchOpenMeteo(loc.lat, loc.lon);
+          } catch(e) {
+            fallbackDefault();
+          }
+        } else {
+          fallbackDefault();
+        }
+      };
+      xhr.onerror = function() { fallbackDefault(); };
+      xhr.ontimeout = function() { fallbackDefault(); };
+      xhr.send();
+    }
+
+    // 第三重：直接使用上海坐标（保证始终可用）
+    function fallbackDefault() {
+      fetchOpenMeteo(31.23, 121.47);
+    }
+
+    function fetchOpenMeteo(lat, lon) {
+      var tempEl = document.getElementById('weatherTemp');
+      var iconEl = document.getElementById('weatherIcon');
+      var descEl = document.getElementById('weatherDesc');
+      if (!tempEl || !iconEl || !descEl) return;
+
+      var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+                '&current=temperature_2m,weather_code,apparent_temperature&timezone=auto';
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.timeout = 6000;
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          try {
+            var data = JSON.parse(xhr.responseText);
+            var current = data.current;
+            if (current && current.temperature_2m !== undefined) {
+              var temp = Math.round(current.temperature_2m);
+              var code = current.weather_code;
+              var feels = current.apparent_temperature !== undefined ? Math.round(current.apparent_temperature) : null;
+              var info = getWeatherInfo(code);
+              tempEl.textContent = temp + '°';
+              iconEl.textContent = info.emoji;
+              descEl.textContent = info.text + (feels !== null ? (' · 体感' + feels + '°') : '');
+            } else {
+              setWeatherFallback();
+            }
+          } catch(e) {
+            setWeatherFallback();
+          }
+        } else {
+          setWeatherFallback();
+        }
+      };
+      xhr.onerror = function() { setWeatherFallback(); };
+      xhr.ontimeout = function() { setWeatherFallback(); };
+      xhr.send();
+    }
+
+    function getWeatherInfo(code) {
+      var map = {
+        0:  { text: '晴天', emoji: '☀️' },
+        1:  { text: '晴间多云', emoji: '🌤️' },
+        2:  { text: '多云', emoji: '⛅' },
+        3:  { text: '阴天', emoji: '☁️' },
+        45: { text: '雾', emoji: '🌫️' },
+        48: { text: '雾', emoji: '🌫️' },
+        51: { text: '小毛毛雨', emoji: '🌦️' },
+        53: { text: '毛毛雨', emoji: '🌦️' },
+        55: { text: '大毛毛雨', emoji: '🌦️' },
+        56: { text: '冻雨', emoji: '🌧️' },
+        57: { text: '冻雨', emoji: '🌧️' },
+        61: { text: '小雨', emoji: '🌧️' },
+        63: { text: '中雨', emoji: '🌧️' },
+        65: { text: '大雨', emoji: '🌧️' },
+        66: { text: '冻雨', emoji: '🌧️' },
+        67: { text: '冻雨', emoji: '🌧️' },
+        71: { text: '小雪', emoji: '🌨️' },
+        73: { text: '中雪', emoji: '🌨️' },
+        75: { text: '大雪', emoji: '🌨️' },
+        77: { text: '雪', emoji: '🌨️' },
+        80: { text: '阵雨', emoji: '🌦️' },
+        81: { text: '阵雨', emoji: '🌦️' },
+        82: { text: '阵雨', emoji: '🌦️' },
+        85: { text: '阵雪', emoji: '🌨️' },
+        86: { text: '阵雪', emoji: '🌨️' },
+        95: { text: '雷暴', emoji: '⛈️' },
+        96: { text: '雷暴', emoji: '⛈️' },
+        99: { text: '大雷暴', emoji: '⛈️' }
+      };
+      return map[code] || { text: '未知', emoji: '🌈' };
+    }
+
+    function setWeatherFallback() {
+      var tempEl = document.getElementById('weatherTemp');
+      var iconEl = document.getElementById('weatherIcon');
+      var descEl = document.getElementById('weatherDesc');
+      if (tempEl) tempEl.textContent = '--';
+      if (iconEl) iconEl.textContent = '🌈';
+      if (descEl) descEl.textContent = '暂不可用';
+    }
+
+    /* ===== 服务器运行计时器 ===== */
+    var UPTIME_START = new Date('2026-06-24T00:00:00+08:00').getTime();
+
+    function updateUptime() {
+      var now = Date.now();
+      var diff = Math.max(0, now - UPTIME_START);
+      var totalSec = Math.floor(diff / 1000);
+
+      var days = Math.floor(totalSec / 86400);
+      var hours = Math.floor((totalSec % 86400) / 3600);
+      var mins = Math.floor((totalSec % 3600) / 60);
+      var secs = totalSec % 60;
+
+      var dEl = document.getElementById('uptimeDays');
+      var hEl = document.getElementById('uptimeHours');
+      var mEl = document.getElementById('uptimeMins');
+      var sEl = document.getElementById('uptimeSecs');
+      if (dEl) dEl.textContent = String(days).padStart(2, '0');
+      if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+      if (mEl) mEl.textContent = String(mins).padStart(2, '0');
+      if (sEl) sEl.textContent = String(secs).padStart(2, '0');
+    }
+
+    setInterval(updateUptime, 1000);
+
+    /* ===== 初始化 ===== */
+    function initApp() {
+      fetchWeather();
+      updateUptime();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
+  </script>
+</body>
+</html>
